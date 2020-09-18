@@ -12,6 +12,11 @@ type SqlSupplier struct {
 	settings   *entities.Config
 }
 
+type SqlStore interface {
+	GetConn() *gorm.DB
+	Close()
+}
+
 type SqlSupplierOldStores struct{}
 
 func NewSqlSupplier(configs *entities.Config) *SqlSupplier {
@@ -26,6 +31,7 @@ func NewSqlSupplier(configs *entities.Config) *SqlSupplier {
 
 func (s *SqlSupplier) initConnection() {
 	s.connection = infra.OpenConnectionMySQL(s.settings.Urls.MySQL)
+	s.Migrate()
 }
 
 func (s *SqlSupplier) GetConn() *gorm.DB {
