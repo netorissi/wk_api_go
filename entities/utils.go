@@ -1,23 +1,11 @@
 package entities
 
-type ConfigFunc func() *Config
+import "encoding/json"
 
-type Config struct {
-	// SqlSettings          SqlSettings
-	// ConfigSettings       ConfigSettings
-	// NoSqlSettings        NoSqlSettings
-	// GeneralSettings      GeneralSettings
-	// LocalizationSettings LocalizationSettings
-	// EmailSettings        EmailSettings
-	// ServiceSettings      ServiceSettings
-	// MailChimp            MailChimp
-	Urls        Urls
-	Environment string
-}
-
-type Urls struct {
-	Nats     string
-	Memcache string
-	MySQL    string
-	NoSQL    string
+func MapToJson(objmap map[string]string) string {
+	if b, err := json.Marshal(objmap); err != nil {
+		return ""
+	} else {
+		return string(b)
+	}
 }
