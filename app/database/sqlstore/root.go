@@ -19,6 +19,12 @@ type LayeredStore struct {
 
 type Store interface {
 	Close()
+
+	Users() UsersStore
+}
+
+type UsersStore interface {
+	Create(user *entities.User) StoreChannel
 }
 
 func NewLayeredStore(db LayeredStoreDatabaseLayer) Store {
@@ -42,4 +48,8 @@ func Do(f func(result *StoreResult)) StoreChannel {
 
 func (s *LayeredStore) Close() {
 	s.DatabaseLayer.Close()
+}
+
+func (s *LayeredStore) Users() UsersStore {
+	return s.DatabaseLayer.Users()
 }

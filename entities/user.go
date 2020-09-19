@@ -1,6 +1,11 @@
 package entities
 
 import (
+	"encoding/json"
+	"errors"
+	"io"
+	"strings"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -23,7 +28,50 @@ type User struct {
 }
 
 // BeforeCreate will set a UUID v4 rather than numeric ID.
-func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+func (u *User) BeforeCreate(tx *gorm.DB) error {
 	u.ID = uuid.New().String()
-	return
+	u.Email = strings.ToLower(u.Email)
+
+	// hash password here
+	u.Password = u.Password
+
+	return nil
+}
+
+// BeforeUpdate check fields requireds.
+func (u *User) BeforeUpdate(tx *gorm.DB) error {
+
+	if len(u.ID) == 0 {
+		return errors.New("User don't have ID")
+	}
+
+	u.Email = strings.ToLower(u.Email)
+
+	if len(u.Password) == 0 {
+		// hash password here
+		u.Password = u.Password
+	}
+
+	return nil
+}
+
+// UserFromJSON - convert to struct
+func UserFromJSON(data io.Reader) *User {
+	decoder := json.NewDecoder(data)
+	var user *User
+
+	if err := decoder.Decode(&user); err == nil {
+		return user
+	}
+
+	return nil
+}
+
+// UserToJSON - convert to json
+func (u *User) UserToJSON() string {
+	b, err := json.Marshal(u)
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }

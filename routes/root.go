@@ -9,8 +9,9 @@ import (
 )
 
 type RoutesMux struct {
-	Root    *mux.Router
-	ApiRoot *mux.Router
+	Root     *mux.Router
+	ApiRoot  *mux.Router
+	ApiUsers *mux.Router
 }
 
 type Routes struct {
@@ -26,6 +27,7 @@ func Init(a *app.App, root *mux.Router) *Routes {
 
 	routes.BaseRoutes.Root = root
 	routes.BaseRoutes.ApiRoot = root.PathPrefix("/api/v1/").Subrouter()
+	routes.BaseRoutes.ApiUsers = routes.BaseRoutes.ApiRoot.PathPrefix("/users/").Subrouter()
 
 	// INJECTOR-INIT
 
@@ -47,4 +49,9 @@ func ReturnStatusOK(w http.ResponseWriter, r *http.Request) {
 	m := make(map[string]string)
 	m["status"] = "OK"
 	w.Write([]byte(entities.MapToJson(m)))
+}
+
+func ReturnStatus(w http.ResponseWriter, sc int, resp []byte) {
+	w.WriteHeader(sc)
+	w.Write(resp)
 }

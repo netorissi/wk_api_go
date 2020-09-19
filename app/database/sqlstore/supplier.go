@@ -15,9 +15,13 @@ type SqlSupplier struct {
 type SqlStore interface {
 	GetConn() *gorm.DB
 	Close()
+
+	Users() UsersStore
 }
 
-type SqlSupplierOldStores struct{}
+type SqlSupplierOldStores struct {
+	users UsersStore
+}
 
 func NewSqlSupplier(configs *entities.Config) *SqlSupplier {
 	supplier := &SqlSupplier{
@@ -25,6 +29,8 @@ func NewSqlSupplier(configs *entities.Config) *SqlSupplier {
 	}
 
 	supplier.initConnection()
+
+	supplier.oldStores.users = NewSqlUsersStore(supplier)
 
 	return supplier
 }
@@ -45,4 +51,8 @@ func (s *SqlSupplier) Close() {
 			sqlDB.Close()
 		}
 	}
+}
+
+func (ss *SqlSupplier) Users() UsersStore {
+	return ss.oldStores.users
 }
