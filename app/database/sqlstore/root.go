@@ -21,10 +21,15 @@ type Store interface {
 	Close()
 
 	Users() UsersStore
+	Sessions() SessionsStore
 }
 
 type UsersStore interface {
 	Create(user *entities.User) StoreChannel
+}
+
+type SessionsStore interface {
+	Create(session *entities.Session) StoreChannel
 }
 
 func NewLayeredStore(db LayeredStoreDatabaseLayer) Store {
@@ -52,4 +57,8 @@ func (s *LayeredStore) Close() {
 
 func (s *LayeredStore) Users() UsersStore {
 	return s.DatabaseLayer.Users()
+}
+
+func (s *LayeredStore) Sessions() SessionsStore {
+	return s.DatabaseLayer.Sessions()
 }

@@ -12,10 +12,10 @@ func (routes *Routes) InitRouteUsers() {
 	apiUsers := routes.BaseRoutes.ApiUsers
 	public := routes.Public
 
-	apiUsers.Handle("", public(createUser)).Methods("POST")
+	apiUsers.Handle("", public(create)).Methods("POST")
 }
 
-func createUser(c *Context, w http.ResponseWriter, r *http.Request) {
+func create(c *Context, w http.ResponseWriter, r *http.Request) {
 	body := entities.UserFromJSON(r.Body)
 
 	user, err := c.App.CreateUser(body)

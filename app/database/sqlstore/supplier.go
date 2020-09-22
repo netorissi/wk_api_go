@@ -17,10 +17,12 @@ type SqlStore interface {
 	Close()
 
 	Users() UsersStore
+	Sessions() SessionsStore
 }
 
 type SqlSupplierOldStores struct {
-	users UsersStore
+	users    UsersStore
+	sessions SessionsStore
 }
 
 func NewSqlSupplier(configs *entities.Config) *SqlSupplier {
@@ -31,6 +33,7 @@ func NewSqlSupplier(configs *entities.Config) *SqlSupplier {
 	supplier.initConnection()
 
 	supplier.oldStores.users = NewSqlUsersStore(supplier)
+	supplier.oldStores.sessions = NewSqlSessionsStore(supplier)
 
 	return supplier
 }
@@ -55,4 +58,8 @@ func (s *SqlSupplier) Close() {
 
 func (ss *SqlSupplier) Users() UsersStore {
 	return ss.oldStores.users
+}
+
+func (ss *SqlSupplier) Sessions() SessionsStore {
+	return ss.oldStores.sessions
 }
