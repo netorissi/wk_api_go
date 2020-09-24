@@ -8,6 +8,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/netorissi/wk_api_go/entities"
+	"github.com/netorissi/wk_api_go/utils"
 )
 
 func (a *App) Login(auth *entities.Authentication, r *http.Request) (
@@ -46,7 +47,7 @@ func (a *App) Login(auth *entities.Authentication, r *http.Request) (
 func (a *App) Logout() {}
 
 func (a *App) CreateToken(user *entities.User) (string, *entities.AppError) {
-	secret := os.Getenv("WK_SECRET")
+	secret := os.Getenv(utils.KEY_SECRET)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
 		"id":    user.ID,
@@ -84,7 +85,7 @@ func (a *App) ValidToken(token string) (bool, *entities.AppError) {
 }
 
 func (a *App) StringToToken(tokenString string) (*jwt.Token, *entities.AppError) {
-	secret := os.Getenv("WK_SECRET")
+	secret := os.Getenv(utils.KEY_SECRET)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
