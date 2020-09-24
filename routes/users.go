@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/netorissi/wk_api_go/entities"
@@ -8,6 +9,7 @@ import (
 
 // InitRouteUsers - init routes to users
 func (routes *Routes) InitRouteUsers() {
+	fmt.Println("[START] - InitRouteUsers")
 
 	apiUsers := routes.BaseRoutes.ApiUsers
 	public := routes.Public

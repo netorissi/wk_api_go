@@ -12,6 +12,7 @@ type RoutesMux struct {
 	Root     *mux.Router
 	ApiRoot  *mux.Router
 	ApiUsers *mux.Router
+	ApiAuth  *mux.Router
 }
 
 type Routes struct {
@@ -27,6 +28,7 @@ func Init(a *app.App, root *mux.Router) *Routes {
 
 	routes.BaseRoutes.Root = root
 	routes.BaseRoutes.ApiRoot = root.PathPrefix("/api/v1/").Subrouter()
+	routes.BaseRoutes.ApiAuth = routes.BaseRoutes.ApiRoot.PathPrefix("/auth/").Subrouter()
 	routes.BaseRoutes.ApiUsers = routes.BaseRoutes.ApiRoot.PathPrefix("/users/").Subrouter()
 
 	// INJECTOR-INIT

@@ -25,7 +25,10 @@ type Store interface {
 }
 
 type UsersStore interface {
+	Get(user *entities.User) StoreChannel
 	Create(user *entities.User) StoreChannel
+
+	GetByAuthentication(auth *entities.Authentication) StoreChannel
 }
 
 type SessionsStore interface {
