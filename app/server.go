@@ -15,6 +15,7 @@ import (
 	"github.com/netorissi/wk_api_go/app/database/nosqlstore"
 	"github.com/netorissi/wk_api_go/app/database/sqlstore"
 	"github.com/netorissi/wk_api_go/entities"
+	"github.com/netorissi/wk_api_go/utils"
 )
 
 const (
@@ -101,6 +102,8 @@ func redirectHTTPToHTTPS(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) StartServer() {
+	utils.SetSecretAuth()
+
 	var handler http.Handler = &CorsWrapper{a.Config, a.Srv.Router}
 
 	a.Srv.Server = &http.Server{
