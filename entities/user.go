@@ -32,9 +32,6 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 	u.ID = uuid.New().String()
 	u.Email = strings.ToLower(u.Email)
 
-	// hash password here
-	u.Password = u.Password
-
 	return nil
 }
 
@@ -46,11 +43,6 @@ func (u *User) BeforeUpdate(tx *gorm.DB) error {
 	}
 
 	u.Email = strings.ToLower(u.Email)
-
-	if len(u.Password) == 0 {
-		// hash password here
-		u.Password = u.Password
-	}
 
 	return nil
 }

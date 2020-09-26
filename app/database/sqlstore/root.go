@@ -29,6 +29,7 @@ type UsersStore interface {
 	Create(user *entities.User) StoreChannel
 
 	GetByAuthentication(auth *entities.Authentication) StoreChannel
+	GetByUniqueFields(user *entities.User) StoreChannel
 }
 
 type SessionsStore interface {

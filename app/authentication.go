@@ -9,6 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/netorissi/wk_api_go/entities"
 	"github.com/netorissi/wk_api_go/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (a *App) Login(auth *entities.Authentication, r *http.Request) (
@@ -22,11 +23,11 @@ func (a *App) Login(auth *entities.Authentication, r *http.Request) (
 	var token string
 
 	if responseAuth, err = a.GetUserByAuthentication(auth); err != nil || responseAuth == nil {
-		return nil, entities.NewAppError("Login", "[COD-AUTH-4]", nil, err.ToJson(), http.StatusUnauthorized)
+		return nil, err
 	}
 
 	if token, err = a.CreateToken(responseAuth.User); err != nil {
-		return nil, entities.NewAppError("Login", "[COD-AUTH-5]", nil, err.ToJson(), http.StatusInternalServerError)
+		return nil, err
 	}
 
 	preSession := &entities.Session{
@@ -36,7 +37,7 @@ func (a *App) Login(auth *entities.Authentication, r *http.Request) (
 	}
 
 	if _, err = a.CreateSession(r, preSession); err != nil {
-		return nil, entities.NewAppError("Login", "[COD-AUTH-6]", nil, err.ToJson(), http.StatusInternalServerError)
+		return nil, err
 	}
 
 	responseAuth.Token = token
@@ -100,4 +101,16 @@ func (a *App) StringToToken(tokenString string) (*jwt.Token, *entities.AppError)
 	}
 
 	return token, nil
+}
+
+// HashPassword - generate hash by password
+func (a *App) HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+// CheckPasswordHash - compare password to hash
+func (a *App) CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
