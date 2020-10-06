@@ -14,8 +14,9 @@ type Authentication struct {
 
 // ResponseAuth - response to user after login
 type ResponseAuth struct {
-	User  *User  `json:"user"`
-	Token string `json:"token"`
+	User         *User  `json:"user"`
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // AuthenticationFromJSON - convert to struct

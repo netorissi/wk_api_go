@@ -82,7 +82,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if len(c.Session.UserID) == 0 {
+		if c.Session.UserID == 0 {
 			c.Err = entities.NewAppError("", "Inválido ou sessão expirada, por favor faça login novamente.", nil, "UserRequired", http.StatusUnauthorized)
 
 			w.WriteHeader(c.Err.StatusCode)

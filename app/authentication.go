@@ -21,12 +21,17 @@ func (a *App) Login(auth *entities.Authentication, r *http.Request) (
 	var responseAuth *entities.ResponseAuth
 	var err *entities.AppError
 	var token string
+	var refreshToken string
 
 	if responseAuth, err = a.GetUserByAuthentication(auth); err != nil || responseAuth == nil {
 		return nil, err
 	}
 
 	if token, err = a.CreateToken(responseAuth.User); err != nil {
+		return nil, err
+	}
+
+	if refreshToken, err = a.RefreshToken(); err != nil {
 		return nil, err
 	}
 
@@ -41,6 +46,7 @@ func (a *App) Login(auth *entities.Authentication, r *http.Request) (
 	}
 
 	responseAuth.Token = token
+	responseAuth.RefreshToken = refreshToken
 
 	return responseAuth, nil
 }
@@ -66,7 +72,21 @@ func (a *App) CreateToken(user *entities.User) (string, *entities.AppError) {
 	return tokenSecret, nil
 }
 
-func (a *App) RefreshToken() {}
+func (a *App) RefreshToken() (string, *entities.AppError) {
+	secret := os.Getenv(utils.KEY_SECRET)
+
+	refreshToken := jwt.New(jwt.SigningMethodHS256)
+	rtClaims := refreshToken.Claims.(jwt.MapClaims)
+	rtClaims["sub"] = 1
+	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+	refreshTokenSecret, err := refreshToken.SignedString([]byte(secret))
+	if err != nil {
+		return "", entities.NewAppError("RefreshToken", "[COD-AUTH-4]", nil, err.Error(), http.StatusBadRequest)
+	}
+
+	return refreshTokenSecret, nil
+}
 
 func (a *App) ValidToken(token string) (bool, *entities.AppError) {
 	if token == "" {

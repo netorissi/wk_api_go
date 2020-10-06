@@ -6,12 +6,11 @@ import (
 	"io"
 	"strings"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        string `gorm:"type:char(36);default:(HEX(UUID_TO_BIN(UUID())));" json:"id"`
+	ID        int    `gorm:"type:int;auto_increment;primary_key;" json:"id"`
 	Name      string `gorm:"type:varchar(200);default:''" json:"name"`
 	Document  string `gorm:"type:varchar(500);default:''" json:"document"`
 	Password  string `gorm:"type:varchar(100);default:''" json:"password"`
@@ -20,8 +19,7 @@ type User struct {
 	Roles     string `gorm:"type:varchar(255);default:''" json:"roles"`
 	Cellphone string `gorm:"type:varchar(20);default:''" json:"cellphone"`
 	Bio       string `gorm:"type:varchar(500);default:''" json:"bio"`
-	Provider  int    `gorm:"type:int(1);default:0" json:"provider"`
-	AvatarID  string `gorm:"type:char(36);default:'';not null"`
+	AvatarID  int    `gorm:"type:int;"`
 	Avatar    Avatar `gorm:"foreignKey:AvatarID;" json:"avatar"`
 	Updated   int64  `gorm:"autoUpdateTime;default:0" json:"updated"`
 	Created   int64  `gorm:"autoCreateTime;default:0" json:"created"`
@@ -29,16 +27,15 @@ type User struct {
 
 // BeforeCreate will set a UUID v4 rather than numeric ID.
 func (u *User) BeforeCreate(tx *gorm.DB) error {
-	u.ID = uuid.New().String()
 	u.Email = strings.ToLower(u.Email)
-
+	u.AvatarID = 1
 	return nil
 }
 
 // BeforeUpdate check fields requireds.
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
 
-	if len(u.ID) == 0 {
+	if u.ID == 0 {
 		return errors.New("User don't have ID")
 	}
 

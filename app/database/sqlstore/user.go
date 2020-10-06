@@ -2,9 +2,11 @@ package sqlstore
 
 import (
 	dbSql "database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/netorissi/wk_api_go/entities"
+	"gorm.io/gorm"
 )
 
 type SqlUsersStore struct {
@@ -35,7 +37,7 @@ func (sql *SqlUsersStore) Get(user *entities.User) StoreChannel {
 // GetByUniqueFields - Get user for signup
 func (sql *SqlUsersStore) GetByUniqueFields(user *entities.User) StoreChannel {
 	return Do(func(result *StoreResult) {
-		var userExist *entities.User
+		var userExist = &entities.User{}
 
 		response := sql.GetConn().Where(
 			"email = ?", user.Email,
@@ -45,10 +47,13 @@ func (sql *SqlUsersStore) GetByUniqueFields(user *entities.User) StoreChannel {
 			"cellphone = ?", user.Cellphone,
 		).First(&userExist)
 
-		if response.Error != nil {
+		if errors.Is(response.Error, gorm.ErrRecordNotFound) {
+			var userEmpty *entities.User
+			result.Data = userEmpty
+		} else if response.Error != nil {
 			result.Err = entities.NewAppError("GetByUniqueFields", "sqlusersstore", nil, response.Error.Error(), http.StatusInternalServerError)
 		} else {
-			result.Data = user
+			result.Data = userExist
 		}
 	})
 }

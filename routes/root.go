@@ -28,10 +28,12 @@ func Init(a *app.App, root *mux.Router) *Routes {
 
 	routes.BaseRoutes.Root = root
 	routes.BaseRoutes.ApiRoot = root.PathPrefix("/api/v1/").Subrouter()
-	routes.BaseRoutes.ApiAuth = routes.BaseRoutes.ApiRoot.PathPrefix("/auth/").Subrouter()
-	routes.BaseRoutes.ApiUsers = routes.BaseRoutes.ApiRoot.PathPrefix("/users/").Subrouter()
+	routes.BaseRoutes.ApiAuth = routes.BaseRoutes.ApiRoot.PathPrefix("/auth").Subrouter()
+	routes.BaseRoutes.ApiUsers = routes.BaseRoutes.ApiRoot.PathPrefix("/users").Subrouter()
 
 	// INJECTOR-INIT
+	routes.InitRouteAuth()
+	routes.InitRouteUsers()
 
 	root.Handle("/status", http.HandlerFunc(ReturnStatusOK))
 	root.Handle("/{anything:.*}", http.HandlerFunc(Handle404))

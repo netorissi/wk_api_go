@@ -8,6 +8,7 @@ import (
 
 	"github.com/netorissi/wk_api_go/app"
 	"github.com/netorissi/wk_api_go/app/infra"
+	"github.com/netorissi/wk_api_go/routes"
 )
 
 func main() {
@@ -27,7 +28,7 @@ func runServer() error {
 
 	a.StartServer()
 	// nats.InitNats(a)
-	// api.Init(a, a.Srv.Router)
+	routes.Init(a, a.Srv.Router)
 
 	fmt.Println("Server running")
 
