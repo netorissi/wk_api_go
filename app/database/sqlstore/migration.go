@@ -1,6 +1,9 @@
 package sqlstore
 
-import "github.com/netorissi/wk_api_go/entities"
+import (
+	"github.com/netorissi/wk_api_go/entities"
+	"github.com/netorissi/wk_api_go/utils"
+)
 
 func (sql *SqlSupplier) Migrate() {
 	db := sql.GetConn()
@@ -14,4 +17,11 @@ func (sql *SqlSupplier) Migrate() {
 		&entities.User{},
 		&entities.UserInformation{},
 	)
+
+	db.Create(&entities.Avatar{
+		Name:    "Default",
+		Type:    1,
+		URL:     "https://img.icons8.com/cotton/2x/worldwide-location.png",
+		Created: utils.DateNow(),
+	})
 }
