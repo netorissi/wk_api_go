@@ -24,7 +24,7 @@ func NewSqlUsersStore(sqlStore SqlStore) UsersStore {
 // Get - Get user
 func (sql *SqlUsersStore) Get(user *entities.User) StoreChannel {
 	return Do(func(result *StoreResult) {
-		response := sql.GetConn().First(&user, user.ID)
+		response := sql.GetConn().Omit("password").First(&user, user.ID)
 
 		if response.Error != nil {
 			result.Err = entities.NewAppError("Get", "sqlusersstore", nil, response.Error.Error(), http.StatusInternalServerError)
@@ -39,7 +39,7 @@ func (sql *SqlUsersStore) GetByUniqueFields(user *entities.User) StoreChannel {
 	return Do(func(result *StoreResult) {
 		var userExist = &entities.User{}
 
-		response := sql.GetConn().Where(
+		response := sql.GetConn().Omit("password").Where(
 			"email = ?", user.Email,
 		).Or(
 			"document = ?", user.Document,
@@ -61,7 +61,7 @@ func (sql *SqlUsersStore) GetByUniqueFields(user *entities.User) StoreChannel {
 // Create - Create new user
 func (sql *SqlUsersStore) Create(user *entities.User) StoreChannel {
 	return Do(func(result *StoreResult) {
-		response := sql.GetConn().Create(&user)
+		response := sql.GetConn().Omit("password").Create(&user)
 
 		if response.Error != nil {
 			result.Err = entities.NewAppError("Create", "sqlusersstore", nil, response.Error.Error(), http.StatusInternalServerError)
@@ -76,7 +76,7 @@ func (sql *SqlUsersStore) GetByAuthentication(auth *entities.Authentication) Sto
 	return Do(func(result *StoreResult) {
 		var user *entities.User
 
-		response := sql.GetConn().Where(
+		response := sql.GetConn().Omit("password").Where(
 			"email = @access OR document = @access OR cellphone = @access",
 			dbSql.Named("access", auth.Access),
 		).First(&user)

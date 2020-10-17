@@ -13,7 +13,7 @@ type User struct {
 	ID        int    `gorm:"type:int;auto_increment;primary_key;" json:"id"`
 	Name      string `gorm:"type:varchar(200);default:''" json:"name"`
 	Document  string `gorm:"type:varchar(500);default:''" json:"document"`
-	Password  string `gorm:"type:varchar(100);default:''" json:"password"`
+	Password  string `gorm:"type:varchar(100);default:''" json:"password,omitempty"`
 	Email     string `gorm:"type:varchar(500);default:''" json:"email"`
 	Status    int    `gorm:"type:int(1);default:1" json:"status"`
 	Roles     string `gorm:"type:varchar(255);default:''" json:"roles"`
