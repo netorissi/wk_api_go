@@ -19,6 +19,21 @@ type LayeredStore struct {
 
 type Store interface {
 	Close()
+
+	Users() UsersStore
+	Sessions() SessionsStore
+}
+
+type UsersStore interface {
+	Get(user *entities.User) StoreChannel
+	Create(user *entities.User) StoreChannel
+
+	GetByAuthentication(auth *entities.Authentication) StoreChannel
+	GetByUniqueFields(user *entities.User) StoreChannel
+}
+
+type SessionsStore interface {
+	Create(session *entities.Session) StoreChannel
 }
 
 func NewLayeredStore(db LayeredStoreDatabaseLayer) Store {
@@ -42,4 +57,12 @@ func Do(f func(result *StoreResult)) StoreChannel {
 
 func (s *LayeredStore) Close() {
 	s.DatabaseLayer.Close()
+}
+
+func (s *LayeredStore) Users() UsersStore {
+	return s.DatabaseLayer.Users()
+}
+
+func (s *LayeredStore) Sessions() SessionsStore {
+	return s.DatabaseLayer.Sessions()
 }
