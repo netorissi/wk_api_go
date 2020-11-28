@@ -20,7 +20,7 @@ type User struct {
 	Roles     string `gorm:"type:varchar(255);default:''" json:"roles"`
 	Cellphone string `gorm:"type:varchar(20);default:''" json:"cellphone"`
 	Bio       string `gorm:"type:varchar(500);default:''" json:"bio"`
-	AvatarID  int    `gorm:"type:int;"`
+	AvatarID  int    `gorm:"type:int;default:0"`
 	Avatar    Avatar `json:"avatar"`
 	Updated   int64  `gorm:"autoUpdateTime;default:0" json:"updated"`
 	Created   int64  `gorm:"autoCreateTime;default:0" json:"created"`
@@ -29,8 +29,18 @@ type User struct {
 // BeforeCreate will set a UUID v4 rather than numeric ID.
 func (u *User) BeforeCreate(tx *gorm.DB) error {
 	u.Email = strings.ToLower(u.Email)
-	u.AvatarID = 1
 	u.Created = utils.DateNow()
+
+	u.Roles = utils.RoleUser
+	if len(u.Roles) > 0 {
+		u.Roles = strings.Join([]string{utils.RoleUser, u.Roles}, ",")
+	}
+
+	u.Avatar = Avatar{
+		Type: 1,
+		Name: "wk-" + u.Email,
+		URL:  "https://blog.yamamura.com.br/wp-content/uploads/2019/04/10_avatar-512.png",
+	}
 	return nil
 }
 

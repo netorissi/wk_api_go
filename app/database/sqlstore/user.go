@@ -61,7 +61,7 @@ func (sql *SqlUsersStore) GetByUniqueFields(user *entities.User) StoreChannel {
 // Create - Create new user
 func (sql *SqlUsersStore) Create(user *entities.User) StoreChannel {
 	return Do(func(result *StoreResult) {
-		response := sql.GetConn().Create(&user)
+		response := sql.GetConn().Create(&user).Association("Avatar")
 
 		if response.Error != nil {
 			result.Err = entities.NewAppError("Create", "sqlusersstore", nil, response.Error.Error(), http.StatusInternalServerError)
