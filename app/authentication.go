@@ -56,7 +56,7 @@ func (a *App) Logout() {}
 func (a *App) CreateToken(user *entities.User) (string, *entities.AppError) {
 	secret := os.Getenv(utils.KEY_SECRET)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":    user.ID,
 		"email": user.Email,
 		"exp":   time.Now().Add(15 * time.Minute).Unix(),

@@ -23,6 +23,7 @@ func login(c *Context, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		c.Err = err
+		ReturnStatus(w, err.StatusCode, []byte(err.ToJson()))
 		return
 	}
 

@@ -31,9 +31,10 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 	u.Email = strings.ToLower(u.Email)
 	u.Created = utils.DateNow()
 
-	u.Roles = utils.RoleUser
 	if len(u.Roles) > 0 {
-		u.Roles = strings.Join([]string{utils.RoleUser, u.Roles}, ",")
+		u.Roles = strings.Join([]string{utils.RoleUser, u.Roles}, ", ")
+	} else {
+		u.Roles = utils.RoleUser
 	}
 
 	u.Avatar = Avatar{

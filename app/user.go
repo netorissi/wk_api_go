@@ -9,16 +9,16 @@ import (
 // CreateUser - create a new user
 func (a *App) CreateUser(user *entities.User) (*entities.User, *entities.AppError) {
 
-	// check exist user
 	if userExistErr := a.CheckExistUser(user); userExistErr != nil {
 		return nil, userExistErr
 	}
 
-	if passwordHash, err := a.HashPassword(user.Password); err != nil {
+	passwordHash, err := a.HashPassword(user.Password)
+	if err != nil {
 		return nil, entities.NewAppError("CreateUser", "hashPassword", nil, err.Error(), http.StatusInternalServerError)
-	} else {
-		user.Password = passwordHash
 	}
+
+	user.Password = passwordHash
 
 	result := <-a.Srv.SqlStore.Users().Create(user)
 	if result.Err != nil {

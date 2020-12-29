@@ -7,9 +7,11 @@ import (
 
 // Authentication - data to login
 type Authentication struct {
-	Access   string
-	Password string
-	DeviceID string
+	// Access is username or email
+	Access   string `json:"access"`
+	Password string `json:"password"`
+	// DeviceID is number of the cellphone
+	DeviceID string `json:"device_id"`
 }
 
 // ResponseAuth - response to user after login
